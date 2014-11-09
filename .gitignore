@@ -1,0 +1,5 @@
+.vagrant
+src
+*.pyc
+.idea/
+dev/data

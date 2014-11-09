@@ -1,0 +1,40 @@
+# vim:ft=ruby
+
+def ncpus
+  case RbConfig::CONFIG['host_os']
+  when /linux/
+    `grep -c processor /proc/cpuinfo`.to_i
+  when /(open|free)bsd/
+    `sysctl -n hw.ncpu`.to_i
+  when /darwin/
+    ((`which hwprefs` != '') ? `hwprefs thread_count` : `sysctl -n hw.ncpu`).to_i
+  else
+    $stderr.puts "Unknown architecture ( #{RbConfig::CONFIG["host_os"]} )" \
+      + "assuming one processor."
+    1
+  end
+end
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.provider "virtualbox" do |v|
+    v.gui = true
+    v.customize ["modifyvm", :id,
+                 "--memory", 2048,
+                 "--cpus", ncpus,
+                 "--natdnshostresolver1", "on",
+                 "--natdnsproxy1", "on"]
+
+  end
+
+  config.vm.define :seafile_dev do |cfg|
+    cfg.vm.hostname = "seafile-dev"
+    cfg.vm.network :private_network, ip: "33.33.33.101", type: "static"
+    cfg.vm.synced_folder '~/.aptcache/precise64', '/var/cache/apt/archives', :create => true
+    cfg.vm.provision :shell, :path => 'provision.sh'
+    cfg.vm.provision :shell, :path => 'build.sh'
+    cfg.vm.provision :shell, :path => 'server.sh'
+  end
+end
