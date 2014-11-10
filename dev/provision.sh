@@ -21,5 +21,12 @@ cat /home/vagrant/.bashrc <<EOF
 export CDPATH=.:/vagrant/src/:/vagrant/data:/vagrant
 EOF
 
+cat /etc/default/seafile-server <<EOF
+export CCNET_CONF_DIR=/vagrant/data/ccnet
+export SEAFILE_CONF_DIR=/vagrant/data/seafile-data
+export EVENTS_CONFIG_FILE=/vagrant/src/seafevents/events.conf
+export PYTHONPATH=/vagrant/data/python-libs:$PYTHONPATH
+EOF
+
 cd /vagrant/src/seahub/ 
 pip install -r requirements.txt --allow-all-external --allow-unverified Djblets --allow-unverified PIL

@@ -6,8 +6,7 @@ DATADIR=/vagrant/data
 SRCDIR=/vagrant/src
 VMIP=33.33.33.101
 
-CCNET_CONF_DIR=$DATADIR/ccnet
-SEAFILE_CONF_DIR=$DATADIR/seafile-data
+. /etc/default/seafile-server
 
 
 init() {
@@ -37,6 +36,10 @@ run() {
     fi
 }
 
+gc() {
+    seafserv-gc -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
+}
+
 
 main() {
     local action=$1; shift
@@ -44,6 +47,8 @@ main() {
         init) init "$@"
               ;;
         run) run "$@"
+             ;;
+        gc) gc "$@"
              ;;
         *) echo "WARNING: no action found"
            ;;

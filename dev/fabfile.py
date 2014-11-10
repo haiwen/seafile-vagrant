@@ -1,7 +1,7 @@
 
 from os.path import join, dirname
 from fabric.api import env, task, cd, run, put
-from seafile_dev import client
+from seafile_dev import seafes
 
 VMIP = '33.33.33.101'
 
@@ -20,3 +20,7 @@ def runserver():
 @task
 def init():
     run('/vagrant/server.sh init')
+
+@task
+def gc():
+    run('/vagrant/server.sh gc')

@@ -7,7 +7,7 @@ def ncpus
   when /(open|free)bsd/
     `sysctl -n hw.ncpu`.to_i
   when /darwin/
-    ((`which hwprefs` != '') ? `hwprefs thread_count` : `sysctl -n hw.ncpu`).to_i
+    ((`which hwprefs` != '') ? `hwprefs thread_count` : `sysctl -n hw.physicalcpu`).to_i
   else
     $stderr.puts "Unknown architecture ( #{RbConfig::CONFIG["host_os"]} )" \
       + "assuming one processor."
@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
 
   config.vm.provider "virtualbox" do |v|
-    v.gui = true
+    v.gui = ENV.fetch("SEAFILE_GUI", false)
     v.customize ["modifyvm", :id,
                  "--memory", 2048,
                  "--cpus", ncpus,
