@@ -84,6 +84,7 @@ main() {
     for proj in $projects; do
         _build_project $proj
     done
+    ldconfig
 }
 
 ##############

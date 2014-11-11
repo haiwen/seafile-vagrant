@@ -18,6 +18,7 @@ end
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
+  config.vm.network :private_network, ip: "172.16.90.100", type: "static"
 
   config.vm.provider "virtualbox" do |v|
     v.gui = ENV.fetch("SEAFILE_GUI", false)
@@ -29,12 +30,25 @@ Vagrant.configure("2") do |config|
 
   end
 
+  config.vm.provider :vmware_fusion do |v|
+    v.gui = ENV.fetch("SEAFILE_GUI", false)
+    v.vmx["memsize"] = "2048"
+    v.vmx["numvcpus"] = ncpus.to_s
+  end
+
   config.vm.define :seafile_dev do |cfg|
     cfg.vm.hostname = "seafile-dev"
-    cfg.vm.network :private_network, ip: "33.33.33.101", type: "static"
-    cfg.vm.synced_folder '~/.aptcache/precise64', '/var/cache/apt/archives', :create => true
+    cfg.vm.synced_folder '~/.aptcache/trusty64', '/var/cache/apt/archives', :create => true
+
     cfg.vm.provision :shell, :path => 'provision.sh'
     cfg.vm.provision :shell, :path => 'build.sh'
-    cfg.vm.provision :shell, :path => 'server.sh'
+    # cfg.vm.provision :shell, :path => 'server.sh'
+
+    cfg.vm.provider :vmware_fusion do |vmware, override|
+      override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box"
+    end
+    cfg.vm.provider :virtualbox do |virtualbox, override|
+      override.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    end
   end
 end

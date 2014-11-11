@@ -4,7 +4,7 @@ set -e
 
 DATADIR=/vagrant/data
 SRCDIR=/vagrant/src
-VMIP=33.33.33.101
+VMIP=172.16.90.100
 
 . /etc/default/seafile-server
 
