@@ -19,6 +19,9 @@ end
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.network :private_network, ip: "172.16.90.100", type: "static"
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 10001, host: 10001
+  config.vm.network "forwarded_port", guest: 12001, host: 12001
 
   config.vm.provider "virtualbox" do |v|
     v.gui = ENV.fetch("SEAFILE_GUI", false)
