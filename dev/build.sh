@@ -58,7 +58,7 @@ _build_seafile() {
 }
 
 _build_seafile_client() {
-    __cmake "nonistall"
+    __cmake "noinstall"
 }
 
 _build_project() {

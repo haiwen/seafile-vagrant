@@ -1,0 +1,47 @@
+# vim:ft=ruby
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.box_check_update = false
+  config.vm.synced_folder "~/.aptcache/trusty64", "/var/cache/apt/archives", :create => true
+  config.vm.synced_folder "data/downloads", "/downloads", :create => true
+  config.vm.provision :shell, :path => "../base-provision.sh"
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 2
+  end
+
+  config.vm.provider :vmware_fusion do |v|
+    v.vmx["memsize"] = "512"
+    v.vmx["numvcpus"] = '2'
+  end
+
+  # the load balancer node, 512MB mem
+  config.vm.define :seafile_lb do |cfg|
+    cfg.vm.hostname = "seafile-load-balancer"
+    cfg.vm.provision :shell, :path => "provision.sh", :args => "lb"
+    cfg.vm.network :private_network, ip: "172.16.2.10"
+  end
+
+  # worker node 1, 512MB mem
+  config.vm.define :seafile_node1 do |cfg|
+    cfg.vm.hostname = "seafile-node1"
+    cfg.vm.provision :shell, :path => "provision.sh", :args => "normal"
+    cfg.vm.network :private_network, ip: "172.16.2.11"
+    cfg.vm.synced_folder "data/node1", "/data", :create => true
+  end
+
+  # worker node 2, 2G mem, for it runs the background tasks
+  config.vm.define :seafile_node2 do |cfg|
+    cfg.vm.hostname = "seafile-node2"
+    cfg.vm.provision :shell, :path => "provision.sh", :args => "background"
+    cfg.vm.network :private_network, ip: "172.16.2.12"
+    cfg.vm.synced_folder "data/node2", "/data", :create => true
+    cfg.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+    end
+    config.vm.provider :vmware_fusion do |v|
+      v.vmx["memsize"] = "2048"
+    end
+  end
+end
