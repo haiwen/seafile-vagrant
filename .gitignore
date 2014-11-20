@@ -4,3 +4,4 @@ src
 .idea/
 dev/data
 cluster/data
+.DS_Store
