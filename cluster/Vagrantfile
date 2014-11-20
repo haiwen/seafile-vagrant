@@ -6,6 +6,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "~/.aptcache/trusty64", "/var/cache/apt/archives", :create => true
   config.vm.synced_folder "data/downloads", "/downloads", :create => true
   config.vm.provision :shell, :path => "../base-provision.sh"
+
   config.vm.provider "virtualbox" do |v|
     v.memory = 512
     v.cpus = 2
