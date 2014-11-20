@@ -28,16 +28,23 @@ provision_normal_node() {
 
 provision_background_node() {
     provision_normal_node;
-    apt-get install -qy memcached libreoffice python3-uno ttf-wqy-microhei ttf-wqy-zenhei xfonts-wqy \
+    apt-get install -qy libreoffice python3-uno ttf-wqy-microhei ttf-wqy-zenhei xfonts-wqy \
             poppler-utils
 
     _install_mysql;
+    _install_memcached;
 }
 
 _install_nginx() {
     apt-get install -qy nginx
     ln -sf /vagrant/seafile-nginx.conf /etc/nginx/sites-enabled/seafile.conf
     service nginx reload
+}
+
+_install_memcached() {
+    apt-get install -qy memcached
+    sed -i -re 's/^-l 127.0.0.1/-l 0.0.0.0/' /etc/memcached.conf || true
+    service memcached restart
 }
 
 _install_mysql() {
