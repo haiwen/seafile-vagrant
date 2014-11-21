@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -x
 
 SRCDIR=/vagrant/src
 
@@ -63,12 +63,13 @@ _build_seafile_client() {
 
 _build_project() {
     local proj=$1
+    local force=$2
     local projname=$(sed -e 's/-/_/g' <<<$proj)
     echo
     echo "building $proj"
     echo
     stamp=/etc/ok-$proj
-    [[ -f $stamp ]] || {
+    [[ $force != "-f" && -f $stamp ]] || {
         cd $SRCDIR/$proj
         _build_$projname
         sudo touch $stamp
@@ -77,14 +78,15 @@ _build_project() {
 
 main() {
     if [[ $# > 0 ]]; then
-        projects=$@
+        projects=$1
+        force=$2
     else
         projects=$ALL_PROJECTS
     fi
     for proj in $projects; do
-        _build_project $proj
+        _build_project $proj $force
     done
-    ldconfig
+    sudo ldconfig
 }
 
 ##############

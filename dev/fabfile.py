@@ -11,7 +11,7 @@ env.password = 'vagrant'
 
 @task
 def build(project=''):
-    run('/vagrant/build.sh {}'.format(project))
+    run('/vagrant/build.sh {} -f'.format(project))
 
 @task
 def runserver():
