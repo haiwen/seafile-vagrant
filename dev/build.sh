@@ -17,7 +17,7 @@ seafile-client
 __autotools() {
     [[ -f configure ]] || ./autogen.sh
     [[ -f Makefile ]] || ./configure "$@"
-    make
+    make -j2
     sudo make install
 }
 
@@ -41,7 +41,7 @@ _build_libevhtp() {
 _build_libzdb() {
     ./bootstrap
     ./configure
-    make
+    make -j2
     sudo make install
 }
 

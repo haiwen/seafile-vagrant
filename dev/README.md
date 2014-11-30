@@ -39,7 +39,7 @@ It would install all required software packages, and build libsearpc/ccnet/seafi
 
 ## Command Tasks
 
-First install fabric on your HOST OS.
+First install fabric on your **HOST** OS.
 
 ```
 sudo pip install fabric
@@ -52,3 +52,11 @@ fab runserver
 ```
 
 It would build and start ccnet-server/seafile-server.
+
+### Compile
+
+Use `fab build:PROJ` command to rebuild a project when source code updated, e.g.:
+
+```sh
+fab build:seafile
+```
