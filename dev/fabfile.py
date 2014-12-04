@@ -18,6 +18,10 @@ def runserver():
     run('/vagrant/server.sh run')
 
 @task
+def runpro():
+    run('/vagrant/server.sh run_pro')
+
+@task
 def init():
     run('/vagrant/server.sh init')
 

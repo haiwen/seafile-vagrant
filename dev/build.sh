@@ -61,6 +61,10 @@ _build_seafile_client() {
     __cmake "noinstall"
 }
 
+_build_seafile_priv() {
+    __autotools --enable-server
+}
+
 _build_project() {
     local proj=$1
     local force=$2

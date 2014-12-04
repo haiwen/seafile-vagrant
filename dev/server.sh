@@ -25,9 +25,15 @@ ccnet_server=$SRCDIR/ccnet/net/server/ccnet-server
 seaf_server=$SRCDIR/seafile/server/seaf-server
 fileserver=$SRCDIR/seafile/fileserver/fileserver
 
+run_pro() {
+    seaf_server=$SRCDIR/seafile-priv/server/seaf-server
+    fileserver=$SRCDIR/seafile-priv/fileserver/fileserver
+    run;
+}
+
 run() {
     _terminate ccnet-server seaf-server fileserver
-    
+
     $ccnet_server -c $CCNET_CONF_DIR -d
     sleep 3
     $seaf_server -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
@@ -47,6 +53,8 @@ main() {
         init) init "$@"
               ;;
         run) run "$@"
+             ;;
+        run_pro) run_pro "$@"
              ;;
         gc) gc "$@"
              ;;
