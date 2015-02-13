@@ -17,7 +17,7 @@ init() {
 
 _terminate() {
     for name in $@; do
-        pkill -f $name || true
+        pkill -f "$name" || true
     done
 }
 
@@ -32,7 +32,7 @@ run_pro() {
 }
 
 run() {
-    _terminate ccnet-server seaf-server fileserver
+    _terminate ccnet-server seaf-server fileserver "manage.py runserver"
 
     $ccnet_server -c $CCNET_CONF_DIR -d
     sleep 3

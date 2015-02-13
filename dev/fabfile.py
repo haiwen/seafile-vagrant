@@ -28,3 +28,8 @@ def init():
 @task
 def gc():
     run('/vagrant/server.sh gc')
+
+@task
+def testseahub(*args):
+    run('/vagrant/src/seahub/tests/seahubtests.sh test {}'.format(
+        ' '.join(['"%s"' % arg for arg in args])))

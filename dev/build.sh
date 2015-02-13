@@ -22,10 +22,15 @@ __autotools() {
 }
 
 __cmake() {
-    cmake -GNinja .
+    local noinstall
+    if [[ $1 == "noinstall" ]]; then
+        shift
+        noinstall="yes"
+    fi
+    cmake -GNinja $@ .
     ninja
-    if [[ $1 != "noinstall" ]]; then
-        ninja install
+    if [[ "noinstall" != "yes" ]]; then
+        sudo ninja install
     fi
 }
 
@@ -35,7 +40,7 @@ _build_ninja() {
 }
 
 _build_libevhtp() {
-    __cmake
+    __cmake -DEVHTP_DISABLE_SSL=OFF -DEVHTP_BUILD_SHARED=ON
 }
 
 _build_libzdb() {
