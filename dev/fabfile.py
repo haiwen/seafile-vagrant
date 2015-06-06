@@ -33,3 +33,8 @@ def gc():
 def testseahub(*args):
     run('/vagrant/src/seahub/tests/seahubtests.sh test {}'.format(
         ' '.join(['"%s"' % arg for arg in args])))
+
+@task
+def runseafevents():
+    with cd('/vagrant/src/seafevents'):
+        run('./run.sh')
