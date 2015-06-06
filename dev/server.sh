@@ -33,6 +33,7 @@ run_pro() {
 
 run() {
     _terminate ccnet-server seaf-server fileserver "manage.py runserver"
+    export SEAFILE_DEBUG=ALL
 
     $ccnet_server -c $CCNET_CONF_DIR -d
     sleep 3
@@ -40,6 +41,9 @@ run() {
     if [[ -f $fileserver ]]; then
         $fileserver -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
     fi
+
+    cd $SRCDIR/seahub
+    ./restart.sh runserver
 }
 
 gc() {

@@ -20,13 +20,13 @@ cd seafile-vagrant/dev/
 mkdir src
 cd ./src
 git clone git://github.com/martine/ninja.git
-git clone haiwen/libzdb
-git clone haiwen/libevhtp
-git clone haiwen/libsearpc
-git clone haiwen/ccnet
-git clone haiwen/seafile
-git clone haiwen/seahub
-git clone haiwen/seafile-client
+git clone git://github.com/haiwen/libzdb
+git clone git://github.com/haiwen/libevhtp
+git clone git://github.com/haiwen/libsearpc
+git clone git://github.com/haiwen/ccnet
+git clone git://github.com/haiwen/seafile
+git clone git://github.com/haiwen/seafile-client
+git clone git://github.com/haiwen/seahub
 ```
 
 Now you can bring up the VM::
