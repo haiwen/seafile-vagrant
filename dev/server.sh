@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -x
 
 DATADIR=/vagrant/data
 SRCDIR=/vagrant/src
@@ -23,24 +23,19 @@ _terminate() {
 
 ccnet_server=$SRCDIR/ccnet/net/server/ccnet-server
 seaf_server=$SRCDIR/seafile/server/seaf-server
-fileserver=$SRCDIR/seafile/fileserver/fileserver
 
 run_pro() {
     seaf_server=$SRCDIR/seafile-priv/server/seaf-server
-    fileserver=$SRCDIR/seafile-priv/fileserver/fileserver
     run;
 }
 
 run() {
-    _terminate ccnet-server seaf-server fileserver "manage.py runserver"
+    _terminate ccnet-server seaf-server "manage.py runserver"
     export SEAFILE_DEBUG=ALL
 
     $ccnet_server -c $CCNET_CONF_DIR -d
     sleep 3
     $seaf_server -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
-    if [[ -f $fileserver ]]; then
-        $fileserver -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
-    fi
 
     cd $SRCDIR/seahub
     ./restart.sh runserver
