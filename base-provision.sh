@@ -30,3 +30,8 @@ fi
 rm -f /etc/apt/sources.list.d/puppetlabs.list
 
 apt-get update -q
+
+cat >>/home/vagrant/.bashrc<<EOF
+export WORKON_HOME=~/.virtualenv
+source /usr/local/bin/virtualenvwrapper.sh 2>/dev/null || true
+EOF

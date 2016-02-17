@@ -1,0 +1,150 @@
+#!/bin/bash
+
+set -e
+
+DATADIR=/vagrant/data
+SRCDIR=/vagrant/src
+defaultconf=/etc/default/seafile-server
+seahubdir=$SRCDIR/seahub
+ccnet_server=$SRCDIR/ccnet/net/server/ccnet-server
+seaf_server=$SRCDIR/seafile/server/seaf-server
+
+cd $seahubdir
+[[ -e $defaultconf ]] && source $defaultconf
+
+safe_source() {
+    if [[ -e $1 ]]; then
+        source $1 || true
+    fi
+}
+
+prepare_env() {
+    export WORKON_HOME=~/.virtualenv
+    safe_source /usr/local/bin/virtualenvwrapper.sh
+    workon seahub || true
+    export PYTHONPATH=$PYTHONPATH:$seahubdir/thirdpart:$SRCDIR/seahub-extra:/usr/local/lib/python2.7/dist-packages/:$HOME/python-libs
+}
+
+
+_terminate() {
+    for name in "$@"; do
+        pkill -f "$name" || true
+    done
+}
+
+init() {
+    mkdir -p $DATADIR
+    [[ -f $CCNET_CONF_DIR/ccnet.conf ]] || ccnet-init -c $CCNET_CONF_DIR --name localdev --host 127.0.0.1
+    [[ -f $SEAFILE_CONF_DIR/seafile.conf ]] || seaf-server-init --seafile-dir $SEAFILE_CONF_DIR
+}
+
+run_pro() {
+    seaf_server=$SRCDIR/seafile-priv/server/seaf-server
+    run
+}
+
+run() {
+    _terminate ccnet-server seaf-server "manage.py runserver"
+    ccnet_socket=/tmp/ccnet.sock
+    rm -f $ccnet_socket
+    export SEAFILE_DEBUG=ALL
+
+    $ccnet_server -c $CCNET_CONF_DIR -d
+    while true; do
+        if [[ -e $ccnet_socket ]]; then
+            echo "ccnet server is ready"
+            break
+        fi
+        echo "wait for ccnet-server to be ready"
+        sleep 1
+    done
+    $seaf_server -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
+
+    # bash
+    python manage.py runserver 0.0.0.0:8000 "$@"
+}
+
+gc() {
+    seafserv-gc -c $CCNET_CONF_DIR -d $SEAFILE_CONF_DIR
+}
+
+sqlite_shell() {
+    local rl db=${1:?"You must specify the sqlite db path"}
+    shift
+    which rlwrap >/dev/null && rl=rlwrap
+    $rl sqlite3 $db "$@"
+}
+
+fetchall() {
+    local projects
+    projects=(
+        libsearpc
+        ccnet
+        seafile
+        seafile-client
+    )
+    for project in ${projects[*]}; do
+        echo "Updating $project ..."
+        cd $SRCDIR/$project
+        git fetch origin --tags
+    done
+}
+
+showlog() {
+    tail -F $DATADIR/seafile-data/seafile.log
+}
+
+main() {
+    prepare_env
+    local action=${1:?"You must specify the action"}; shift
+    case $action in
+        run) run "$@"
+             ;;
+        run_pro) run_pro "$@"
+             ;;
+        gc) gc "$@"
+             ;;
+        admin) python manage.py "$@"
+             ;;
+        db) sqlite_shell $seahubdir/seahub/seahub.db "$@"
+             ;;
+        ccnet_db) sqlite_shell $DATADIR/ccnet/PeerMgr/usermgr.db
+             ;;
+        seafile_db) sqlite_shell $DATADIR/seafile-data/seafile.db
+             ;;
+        collectstatic) python manage.py collectstatic --noinput
+             ;;
+        dist) make uglify
+             ;;
+        fetchall) fetchall
+             ;;
+        resetadmin) python manage.py createsuperuser
+             ;;
+        log) showlog
+             ;;
+        --list)
+            cmds=(
+                run
+                run_pro
+                gc
+                admin
+                db
+                ccnet_db
+                seafile_db
+                collectstatic
+                dist
+                fetchall
+                log
+                resetadmin
+                --list
+            )
+            for cmd in ${cmds[*]}; do
+                echo $cmd
+            done
+            ;;
+        *) echo "WARNING: no action found"
+           ;;
+    esac
+}
+
+main "$@"

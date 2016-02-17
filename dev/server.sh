@@ -11,7 +11,11 @@ VMIP=172.16.90.100
 
 init() {
     mkdir -p $DATADIR
-    [[ -f $CCNET_CONF_DIR/ccnet.conf ]] || ccnet-init -c $CCNET_CONF_DIR --name vagrant-vm --port 10001 --host $VMIP
+    [[ -f $CCNET_CONF_DIR/ccnet.conf ]] || { 
+        ccnet-init -c $CCNET_CONF_DIR --name vagrant-vm --port 10001 --host $VMIP
+        echo UNIX_SOCKET=/tmp/ccnet.sock >> $CCNET_CONF_DIR/ccnet.conf
+
+    }
     [[ -f $SEAFILE_CONF_DIR/seafile.conf ]] || seaf-server-init --seafile-dir $SEAFILE_CONF_DIR
 }
 
