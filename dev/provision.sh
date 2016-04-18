@@ -12,12 +12,14 @@ mysql-server-5.1 mysql-server/root_password_again password $MYSQL_PASSWORD
 !
 
 apt-get -qy install ubuntu-desktop unity git autoconf automake libtool libevent-dev libcurl4-openssl-dev libgtk2.0-dev \
-        uuid-dev intltool sqlite3 libsqlite3-dev valac libjansson-dev libqt4-dev cmake libfuse-dev \
+        uuid-dev intltool sqlite3 libsqlite3-dev valac libjansson-dev cmake libfuse-dev \
         re2c flex libmysqlclient-dev libarchive-dev python-dev python-mysqldb rlwrap python-pip \
-        libssl-dev openjdk-7-jdk libevent-dev libonig-dev tmux python-sqlalchemy python-simplejson mysql-server-5.6 htop nginx
+        libssl-dev openjdk-7-jdk libevent-dev libonig-dev tmux python-sqlalchemy python-simplejson mysql-server-5.6 htop nginx \
+        qtbase5-dev libqt5webkit5-dev qttools5-dev qttools5-dev-tools
 
 cat <<EOF >>/home/vagrant/.bashrc
 export CDPATH=.:/vagrant/src/:/vagrant/data:/vagrant
+export QT_SELECT=5
 EOF
 
 cat  <<EOF >/etc/default/seafile-server

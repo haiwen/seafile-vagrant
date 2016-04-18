@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e -x
-[[ ! -f /etc/apt/sources.list.bak ]] || exit 0
+[[ -f /etc/apt/sources.list.bak ]] && exit 0
 
 # remove unused services
 service puppet stop
@@ -9,6 +9,7 @@ update-rc.d -f puppet remove
 service chef-client stop || true
 update-rc.d -f cheif-client remove || true
 
+# export USE_CN_MIRROR=true
 if [[ $USE_CN_MIRROR == "true" ]]; then
     # Use 163 apt mirrors
     cp /etc/apt/sources.list /etc/apt/sources.list.bak
