@@ -2,6 +2,7 @@
 
 vm_gui = ENV.fetch("SEAFILE_GUI", false)
 vm_ram = ENV.fetch("SEAFILE_DEV_VM_RAM", 2048).to_i
+vm_cpus = ENV.fetch("SEAFILE_DEV_VM_CPUS", 2).to_i
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
@@ -17,7 +18,7 @@ Vagrant.configure("2") do |config|
     override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box"
     v.gui = vm_gui
     v.vmx["memsize"] = vm_ram.to_s
-    v.vmx["numvcpus"] = "2"
+    v.vmx["numvcpus"] =vm_cpus.to_s
   end
 
   config.vm.provider :virtualbox do |v, override|
@@ -25,7 +26,7 @@ Vagrant.configure("2") do |config|
     v.gui = vm_gui
     v.customize ["modifyvm", :id,
                  "--memory", vm_ram,
-                 "--cpus", 2,
+                 "--cpus", vm_cpus,
                  "--natdnshostresolver1", "on",
                  "--natdnsproxy1", "on"]
   end
