@@ -1,0 +1,39 @@
+# vim:ft=ruby
+
+vm_gui = ENV.fetch("SEAFILE_GUI", true)
+vm_ram = ENV.fetch("SEAFILE_DEV_VM_RAM", 2048).to_i
+vm_cpus = ENV.fetch("SEAFILE_DEV_VM_CPUS", 2).to_i
+
+Vagrant.configure("2") do |config|
+  # config.vm.box = "ubuntu/xenial64"
+  # config.vm.box = "boxcutter/ubuntu1604-desktop"
+  config.vm.box = "geerlingguy/ubuntu1604"
+  config.vm.box_check_update = false
+  config.vm.synced_folder '~/.aptcache/xenial64', '/var/cache/apt/archives', :create => true, mount_options: ["dmode=777,fmode=666"]
+  # Removes annoying message about public key replacement
+  config.ssh.insert_key = false
+  
+
+  config.vm.provision :shell, :path => 'provision.sh'
+
+  config.vm.provider :vmware_fusion do |v, override|
+    v.gui = vm_gui
+    v.vmx["memsize"] = vm_ram.to_s
+    v.vmx["numvcpus"] =vm_cpus.to_s
+  end
+
+  config.vm.provider :virtualbox do |v, override|
+    v.gui = vm_gui
+    v.customize ["modifyvm", :id,
+                 "--memory", vm_ram,
+                 "--cpus", vm_cpus,
+                 "--natdnshostresolver1", "on",
+                 "--natdnsproxy1", "on"]
+  end
+
+  config.vm.define :seafile_dev_kubuntu do |cfg|
+    cfg.vm.hostname = "seafile-dev-kubuntu"
+    cfg.vm.hostname = "seafile-dev-kubuntu"
+    cfg.vm.network :private_network, ip: "172.16.90.102", type: "static"
+  end
+end

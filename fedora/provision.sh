@@ -20,7 +20,9 @@ DISPLAYMANAGER="KDE"
 EOF
 
 cat <<EOF >>/home/vagrant/.bashrc
-PS1="\[$(tput bold)\]\[$(tput setaf 2)\][\u@\h \w]\\$ \[$(tput sgr0)\]"
+if [[ $- == *i* ]]; then
+    PS1="\[$(tput bold)\]\[$(tput setaf 2)\][\u@\h \w]\\$ \[$(tput sgr0)\]"
+fi
 export CDPATH=.:/vagrant/src/:/vagrant/data:/vagrant
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 EOF
