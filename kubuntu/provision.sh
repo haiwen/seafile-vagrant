@@ -14,6 +14,8 @@ rm -f /etc/apt/sources.list.d/puppetlabs.list
 apt-get update -q
 apt-get install -y tmux htop vim software-properties-common
 
+# Install KDE 5
+# See http://ubuntuforums.org/showthread.php?t=2318147&p=13459527#post13459527
 apt-add-repository http://archive.neon.kde.org/stable
 curl -s http://archive.neon.kde.org/public.key| sudo apt-key add -
 apt-get update -q
@@ -34,7 +36,8 @@ export CDPATH=.:/vagrant/src/:/vagrant/data:/vagrant
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 EOF
 
-## Add kde auto login of vagrant user
+# Add kde auto login of vagrant user
+# See https://wiki.archlinux.org/index.php/SDDM#Autologin
 sddm --example-config > /etc/sddm.conf
 sed -i -e '0,/User=/{s/^User=.*$/User=vagrant/}' /etc/sddm.conf
 sed -i -e '0,/Session=/{s/^Session=.*$/Session=plasma.desktop/}' /etc/sddm.conf
