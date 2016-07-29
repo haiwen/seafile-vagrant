@@ -5,9 +5,9 @@ vm_ram = ENV.fetch("SEAFILE_DEV_VM_RAM", 1024).to_i
 vm_cpus = ENV.fetch("SEAFILE_DEV_VM_CPUS", 1).to_i
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/wheezy64"
+  config.vm.box = "debian/jessie64"
   config.vm.box_check_update = false
-  config.vm.synced_folder '~/.aptcache/wheezy64', '/var/cache/apt/archives', :create => true
+  config.vm.synced_folder '~/.aptcache/jessie64', '/var/cache/apt/archives', :create => true
   # Removes annoying message about public key replacement
   config.ssh.insert_key = false
 
@@ -28,8 +28,8 @@ Vagrant.configure("2") do |config|
                  "--natdnsproxy1", "on"]
   end
 
-  config.vm.define :seafile_dev_debian7 do |cfg|
-    cfg.vm.hostname = "seafile-dev-debian7"
-    cfg.vm.network :private_network, ip: "172.16.90.103", type: "static"
+  config.vm.define :seafile_dev_debian8 do |cfg|
+    cfg.vm.hostname = "seafile-dev-debian8"
+    cfg.vm.network :private_network, ip: "172.16.90.104", type: "static"
   end
 end
