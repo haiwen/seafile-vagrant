@@ -4,10 +4,10 @@ set -e -x
 
 SRCDIR=/vagrant/src
 
+# libevhtp
+# libzdb
 ALL_PROJECTS="
 ninja
-libevhtp
-libzdb
 libsearpc
 ccnet
 seafile
@@ -29,9 +29,9 @@ __cmake() {
     fi
     cmake -GNinja $@ .
     ninja
-    if [[ "noinstall" != "yes" ]]; then
-        sudo ninja install
-    fi
+    # if [[ "noinstall" != "yes" ]]; then
+    #     sudo ninja install
+    # fi
 }
 
 _build_ninja() {
@@ -55,11 +55,11 @@ _build_libsearpc() {
 }
 
 _build_ccnet() {
-    __autotools --enable-server
+    __autotools
 }
 
 _build_seafile() {
-    __autotools --enable-server
+    __autotools --disable-fuse
 }
 
 _build_seafile_client() {
@@ -68,6 +68,17 @@ _build_seafile_client() {
 
 _build_seafile_priv() {
     __autotools --enable-server
+}
+
+_build_seadrive() {
+    __autotools
+}
+
+_build_seadrive_gui() {
+    set +e
+    . /opt/qt56/bin/qt56-env.sh
+    set -x
+    __cmake "noinstall"
 }
 
 _build_project() {

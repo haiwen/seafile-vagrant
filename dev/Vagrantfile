@@ -22,7 +22,6 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provider :virtualbox do |v, override|
-    override.vm.box_url = "http://files.vagrantup.com/precise64.box"
     v.gui = vm_gui
     v.customize ["modifyvm", :id,
                  "--memory", vm_ram,

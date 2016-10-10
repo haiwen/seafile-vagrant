@@ -1,6 +1,6 @@
 # vim:ft=ruby
 
-vm_gui = ENV.fetch("SEAFILE_GUI", true)
+vm_gui = ENV.fetch("SEAFILE_GUI", false)
 vm_ram = ENV.fetch("SEAFILE_DEV_VM_RAM", 2048).to_i
 vm_cpus = ENV.fetch("SEAFILE_DEV_VM_CPUS", 2).to_i
 
@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder '~/.aptcache/xenial64', '/var/cache/apt/archives', :create => true, mount_options: ["dmode=777,fmode=666"]
   # Removes annoying message about public key replacement
   config.ssh.insert_key = false
-  
+
 
   config.vm.provision :shell, :path => 'provision.sh'
 
