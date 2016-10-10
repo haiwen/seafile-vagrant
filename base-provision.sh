@@ -1,11 +1,13 @@
 #!/bin/bash
 
 set -e -x
-[[ -f /etc/apt/sources.list.bak ]] && exit 0
+if [[ -f /etc/apt/sources.list.bak ]]; then
+    exit 0
+fi
 
 # remove unused services
 service puppet stop || true
-update-rc.d -f puppet remove
+update-rc.d -f puppet remove || true
 service chef-client stop || true
 update-rc.d -f cheif-client remove || true
 
@@ -34,7 +36,6 @@ deb http://mirror.hetzner.de/ubuntu/packages  trusty-updates   main restricted u
 deb http://mirror.hetzner.de/ubuntu/security  trusty-security  main restricted universe multiverse
 EOF
 fi
-
 
 rm -f /etc/apt/sources.list.d/puppetlabs.list
 
