@@ -27,7 +27,7 @@ __cmake() {
         noinstall="yes"
     fi
     cmake -GNinja $@ .
-    ninja
+    ninja -j1
 }
 
 _build_ninja() {
