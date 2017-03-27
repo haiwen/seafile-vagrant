@@ -1,0 +1,35 @@
+# vim:ft=ruby
+
+vm_gui = ENV.fetch("SEAFILE_GUI", true)
+vm_ram = ENV.fetch("SEAFILE_DEV_VM_RAM", 1024).to_i
+vm_cpus = ENV.fetch("SEAFILE_DEV_VM_CPUS", 1).to_i
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "fujimakishouten/debian-stretch64"
+  config.vm.box_check_update = false
+  config.vm.synced_folder '~/.aptcache/stretch64', '/var/cache/apt/archives', :create => true
+  # Removes annoying message about public key replacement
+  config.ssh.insert_key = false
+
+  config.vm.provision :shell, :path => 'provision.sh'
+
+  config.vm.provider :vmware_fusion do |v, override|
+    v.gui = vm_gui
+    v.vmx["memsize"] = vm_ram.to_s
+    v.vmx["numvcpus"] =vm_cpus.to_s
+  end
+
+  config.vm.provider :virtualbox do |v, override|
+    v.gui = vm_gui
+    v.customize ["modifyvm", :id,
+                 "--memory", vm_ram,
+                 "--cpus", vm_cpus,
+                 "--natdnshostresolver1", "on",
+                 "--natdnsproxy1", "on"]
+  end
+
+  config.vm.define :seafile_dev_debian9 do |cfg|
+    cfg.vm.hostname = "seafile-dev-debian9"
+    cfg.vm.network :private_network, ip: "172.16.90.106", type: "static"
+  end
+end
